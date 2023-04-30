@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "385725292823",
+    "project_id": "roadcrackdetector",
+    "storage_bucket": "roadcrackdetector.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385725292823:android:6fc8245f12e82c14411752",
+        "android_client_info": {
+          "package_name": "com.gvvp.roadcrackdetector"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385725292823-4as23ga4kluui06oskkroop5nd93jsbt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw_w8S_vHynzF3JP1-fWBGFy3_4Jnk7AY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385725292823-4as23ga4kluui06oskkroop5nd93jsbt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
