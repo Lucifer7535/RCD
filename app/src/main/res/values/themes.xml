@@ -1,16 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.RoadCrackDetector" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Primary brand color. -->
+
+    <style name="Theme.RoadCrackDetector" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/primary_font</item>
         <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimary</item>
-        <!-- Customize your theme here. -->
+        <item name="android:statusBarColor">#00000000</item>
     </style>
+
     <style name="CalendarTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
         <item name="colorAccent">@color/black</item>
         <item name="colorControlActivated">@color/primary_font</item>
@@ -19,4 +16,17 @@
         <item name="android:textColorPrimaryInverse">@color/white</item>
         <item name="android:textColorSecondaryInverse">@color/white</item>
     </style>
+
+    <style name="NavBar">
+        <item name="android:windowEnterAnimation">@anim/slide_in</item>
+        <item name="android:windowExitAnimation">@anim/slide_out</item>
+    </style>
+
+    <!-- InputTextLayout styling -->
+    <style name="textfield_theme" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="android:textAppearance">?attr/textAppearanceSubtitle1</item>
+        <item name="boxStrokeColor">@color/strokeDay</item>
+        <item name="boxStrokeErrorColor">@color/primary</item>
+    </style>
+
 </resources>
