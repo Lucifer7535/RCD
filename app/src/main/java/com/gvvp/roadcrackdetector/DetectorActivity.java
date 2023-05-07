@@ -270,21 +270,21 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 backgroundPaint.setAlpha(128);
 
                 RectF location = result.getLocation();
-                String title = result.getTitle();
-                Float conf = 100 * result.getConfidence();
-                DecimalFormat df = new DecimalFormat("#.##");
-                String confasString = df.format(conf)+"%";
+//                String title = result.getTitle();
+//                Float conf = 100 * result.getConfidence();
+//                DecimalFormat df = new DecimalFormat("#.##");
+//                String confasString = df.format(conf)+"%";
                 if (location != null) {
                     canvas.drawRect(location, paint);
-                    float titleWidth = textpaint.measureText(title);
-                    float confWidth = textpaint.measureText(confasString);
-                    float top = location.top-40;
-
-                    float centerX = location.left;
-                    float baseline = top - textpaint.getFontMetrics().top;
-
-                    canvas.drawText(title, centerX, baseline, textpaint);
-                    canvas.drawText(confasString, location.right-confWidth, baseline, textpaint);
+//                    float titleWidth = textpaint.measureText(title);
+//                    float confWidth = textpaint.measureText(confasString);
+//                    float top = location.top-40;
+//
+//                    float centerX = location.left;
+//                    float baseline = top - textpaint.getFontMetrics().top;
+//
+//                    canvas.drawText(title, centerX, baseline, textpaint);
+//                    canvas.drawText(confasString, location.right-confWidth, baseline, textpaint);
                 }
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();

@@ -8,21 +8,33 @@
             android:icon="@drawable/baseline_edit_24"
             android:title="Edit Profile" />
         <item
-            android:id="@+id/nav_share"
-            android:icon="@drawable/baseline_share_24"
-            android:title="Share" />
+            android:id="@+id/nav_detectcracks"
+            android:icon="@drawable/baseline_search_24"
+            android:title="Detect Cracks" />
         <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/baseline_info_24"
-            android:title="About Us" />
+            android:id="@+id/nav_showmaps"
+            android:icon="@drawable/baseline_fmd_good_24"
+            android:title="Show Maps" />
+        <item
+            android:id="@+id/nav_crackstats"
+            android:icon="@drawable/baseline_data_exploration_24"
+            android:title="View Cracks Statistics" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/baseline_logout_24"
+            android:title="Logout" />
     </group>
-    <item android:title="Profile">
+    <item android:title="Contact Us">
         <menu>
             <group android:checkableBehavior="single">
-            <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/baseline_logout_24"
-                android:title="Logout" />
+                <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/baseline_share_24"
+                    android:title="Share" />
+                <item
+                    android:id="@+id/nav_about"
+                    android:icon="@drawable/baseline_info_24"
+                    android:title="About Us" />
             </group>
         </menu>
     </item>

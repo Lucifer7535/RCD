@@ -1,5 +1,7 @@
 package com.gvvp.roadcrackdetector;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,7 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -33,9 +38,14 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.gvvp.roadcrackdetector.env.Logger;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,11 +54,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-
     public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.15f;
     public static final int PRIORITY_HIGH_ACCURACY = 100;
 
+    private ImageView menuProfile;
+    private TextView menuName, menuEmail;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     public static double latitude;
     public static double longitude;
     private static final Logger LOGGER = new Logger();
@@ -70,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
         toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -83,7 +96,108 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Menu menu = navigationView.getMenu();
         MenuItem logout_btn = menu.findItem(R.id.nav_logout);
+        MenuItem menu_ep_btn = menu.findItem(R.id.nav_editprofile);
+        MenuItem menu_dc_btn = menu.findItem(R.id.nav_detectcracks);
+        MenuItem menu_sm_btn = menu.findItem(R.id.nav_showmaps);
+        MenuItem menu_cs_btn = menu.findItem(R.id.nav_crackstats);
+        MenuItem menu_share_btn = menu.findItem(R.id.nav_share);
+        MenuItem menu_about_btn = menu.findItem(R.id.nav_about);
 
+        menuProfile = headerView.findViewById(R.id.nav_profile_image);
+        menuName = headerView.findViewById(R.id.nav_fullname);
+        menuEmail = headerView.findViewById(R.id.nav_email);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        String uid = mAuth.getCurrentUser().getUid();
+        DocumentReference userRef = db.collection("Users").document(uid);
+
+        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    String name = documentSnapshot.getString("fullname");
+                    String email = documentSnapshot.getString("email");
+                    String imageUrl = documentSnapshot.getString("image");
+                    //do nothing
+                    if(imageUrl==null) {
+                        Toast.makeText(MainActivity.this, "No Profile Picture Found",Toast.LENGTH_SHORT).show();
+                        //do nothing
+                    }
+                    else{
+                        Glide.with(MainActivity.this)
+                                .load(imageUrl)
+                                .into(menuProfile);
+                    }
+                    // Set the retrieved data in EditText fields
+                    menuName.setText(name);
+                    menuEmail.setText(email);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(MainActivity.this, "Failed to retrieve user data", Toast.LENGTH_SHORT).show();
+            }
+        });
+        menu_ep_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), EditProfileActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        menu_dc_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), DetectorActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        menu_sm_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        menu_cs_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), StatsActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+
+        menu_about_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                openDialog();
+                return true;
+            }
+
+            private void openDialog() {
+                AboutUsDialog aboutUsDialog = new AboutUsDialog();
+                aboutUsDialog.show(getSupportFragmentManager(), "About Us Dialog");
+            }
+        });
+
+        menu_share_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem item) {
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("Share Link","https://github.com/Lucifer7535/Road-Crack-Detector");
+                clipboardManager.setPrimaryClip(clipData);
+                Toast.makeText(MainActivity.this, "Link Copied to Clipboard", Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
         logout_btn.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(@NonNull MenuItem item) {
@@ -98,7 +212,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
             }
         });
-
+        editprofilebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), EditProfileActivity.class);
+                startActivity(intent);
+            }
+        });
         viewstatsbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
