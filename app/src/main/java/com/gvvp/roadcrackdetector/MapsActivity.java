@@ -9,6 +9,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
@@ -61,7 +65,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final Logger LOGGER = new Logger();
 
     private BottomSheetBehavior bottomSheetBehavior;
-    View bottomSheet;
+    private View bottomSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +76,41 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        SearchView searchView = findViewById(R.id.search_bar);
+
         bottomSheet = findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        bottomSheetBehavior.setPeekHeight(200);
+        bottomSheetBehavior.setPeekHeight(100);
         bottomSheetBehavior.setHideable(true);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterMarkers(newText);
+                return true;
+            }
+        });
+    }
+
+    class SelectedMarkerHolder {
+        Marker selectedMarker = null;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         markerList = new ArrayList<>();
         mMap = googleMap;
+        final SelectedMarkerHolder selectedMarkerHolder = new SelectedMarkerHolder();
+        final BitmapDescriptor defaultMarkerIcon = BitmapDescriptorFactory.defaultMarker();
+        final BitmapDescriptor selectedMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.selected_marker);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
@@ -112,7 +138,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         usersRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                //mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MapsActivity.this));
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot userDocument : task.getResult()) {
                         DocumentReference userRef = usersRef.document(userDocument.getId());
@@ -154,7 +179,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         builder.include(marker.getPosition());
                                     }
                                     LatLngBounds bounds = builder.build();
-                                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                                    if(bounds==null){
+                                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                        startActivity(intent);
+                                        Toast.makeText(MapsActivity.this, "Loading Locations, Try after some time", Toast.LENGTH_LONG).show();
+                                    }
+                                    else{
+                                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+                                    }
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }
@@ -174,6 +206,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onMarkerClick(Marker marker) {
                 updateBottomSheetContent(marker);
+                if (selectedMarkerHolder.selectedMarker != null) {
+                    selectedMarkerHolder.selectedMarker.setIcon(defaultMarkerIcon);
+                }
+                // Select the clicked marker
+                marker.setIcon(selectedMarkerIcon);
+                selectedMarkerHolder.selectedMarker = marker;
                 return true;
             }
         });
@@ -181,9 +219,24 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapClick(LatLng latLng) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                if (selectedMarkerHolder.selectedMarker != null) {
+                    selectedMarkerHolder.selectedMarker.setIcon(defaultMarkerIcon);
+                    selectedMarkerHolder.selectedMarker = null;
+                }
             }
         });
 
+    }
+
+    private void filterMarkers(String query) {
+        for (Marker marker : markerList) {
+            String title = marker.getTitle();
+            if (title.toLowerCase().contains(query.toLowerCase())) {
+                marker.setVisible(true);
+            } else {
+                marker.setVisible(false);
+            }
+        }
     }
 
     //method to set view in bottom sheet

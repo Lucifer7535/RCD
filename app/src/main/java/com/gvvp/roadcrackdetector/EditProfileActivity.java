@@ -197,7 +197,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
 
                 // Update the password using Firebase Auth
-                if (!passwordtf.getText().toString().isEmpty() && !(passwordtf.getText().toString() == "Change")) {
+                if (!passwordtf.getText().toString().isEmpty() && !(passwordtf.getText().toString().equals("Change"))) {
                     mAuth.getCurrentUser().updatePassword(passwordtf.getText().toString().trim())
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override

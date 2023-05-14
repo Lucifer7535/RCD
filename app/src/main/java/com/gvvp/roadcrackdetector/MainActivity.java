@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.15f;
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
     public static final int PRIORITY_HIGH_ACCURACY = 100;
 
     private ImageView menuProfile;

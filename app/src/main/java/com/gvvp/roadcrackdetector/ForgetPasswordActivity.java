@@ -17,7 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ForgetPassword extends AppCompatActivity {
+public class ForgetPasswordActivity extends AppCompatActivity {
 
     private TextInputLayout email_tf;
     private Button reset_password_btn, fp_login_btn;
@@ -50,7 +50,7 @@ public class ForgetPassword extends AppCompatActivity {
         fp_login_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ForgetPassword.this, MainActivity.class));
+                startActivity(new Intent(ForgetPasswordActivity.this, MainActivity.class));
                 finish();
             }
         });
@@ -76,9 +76,9 @@ public class ForgetPassword extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     progressbar.setVisibility(View.VISIBLE);
-                    Toast.makeText(ForgetPassword.this,"Check your email to reset your Password!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ForgetPasswordActivity.this,"Check your email to reset your Password!", Toast.LENGTH_LONG).show();
                 }else{
-                    Toast.makeText(ForgetPassword.this,"No user Registered with this Email Id", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ForgetPasswordActivity.this,"No user Registered with this Email Id", Toast.LENGTH_LONG).show();
                 }progressbar.setVisibility(View.GONE);
             }
         });

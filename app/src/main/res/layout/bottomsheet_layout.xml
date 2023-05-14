@@ -4,9 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="650dp"
     android:background="@drawable/bottom_sheet_bg"
     android:id="@+id/bottom_sheet"
+    android:padding="10dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +25,6 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp" />
             <TextView
                 android:id="@+id/marker_conf"
@@ -37,15 +37,27 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp" />
         </LinearLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/darker_gray" />
         <ImageView
             android:id="@+id/marker_image"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:src="@drawable/bottom_sheet_image"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/darker_gray" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -56,18 +68,24 @@
                 android:text="Location:"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"/>
+                android:textStyle="bold" />
             <TextView
                 android:id="@+id/marker_desc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Location Description"
+                android:layout_marginStart="5dp"
                 android:textSize="18sp"
-                android:textColor="@color/secondary_font"
-                android:layout_marginEnd="10dp"/>
+                android:textColor="@color/secondary_font" />
         </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@android:color/darker_gray" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -75,20 +93,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Timestamp:"
+                android:text="Date and Time:"
                 android:textSize="18sp"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"/>
+                android:textStyle="bold" />
             <TextView
                 android:id="@+id/marker_ts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Timestamp data"
                 android:textSize="18sp"
-                android:textColor="@color/secondary_font"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginStart="5dp"
+                android:textColor="@color/secondary_font" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

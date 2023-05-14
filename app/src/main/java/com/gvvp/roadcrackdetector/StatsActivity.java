@@ -40,8 +40,8 @@ public class StatsActivity extends AppCompatActivity {
         getData();
         BarDataSet barDataSet = new BarDataSet(barArraylist, "Crack Types");
         Description description = new Description();
-        description.setText("Road Crack Types");
-        description.setPosition(999f, 999f);
+        description.setText("");
+        description.setPosition(0f, 0f);
         barChart.setDescription(description);
         BarData barData = new BarData(barDataSet);
         barChart.setData(barData);

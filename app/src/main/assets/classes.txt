@@ -1,4 +1,4 @@
 Linear crack
-Longitudinal crack
+Transverse crack
 Alligator crack
 Pothole

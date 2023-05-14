@@ -38,7 +38,7 @@
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name=".ForgetPassword"
+            android:name=".ForgetPasswordActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
