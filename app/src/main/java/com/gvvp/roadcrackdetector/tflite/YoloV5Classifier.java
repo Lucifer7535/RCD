@@ -90,7 +90,7 @@ public class YoloV5Classifier implements Classifier {
             }
             if (isGPU) {
                 GpuDelegate.Options gpu_options = new GpuDelegate.Options();
-                gpu_options.setPrecisionLossAllowed(true); // It seems that the default is true
+                //gpu_options.setPrecisionLossAllowed(true); // It seems that the default is true
                 gpu_options.setInferencePreference(GpuDelegate.Options.INFERENCE_PREFERENCE_SUSTAINED_SPEED);
                 d.gpuDelegate = new GpuDelegate(gpu_options);
                 options.addDelegate(d.gpuDelegate);
@@ -301,7 +301,7 @@ public class YoloV5Classifier implements Classifier {
         return nmsList;
     }
 
-    protected float mNmsThresh = 0.6f;
+    protected float mNmsThresh = 0.15f;
 
     protected float box_iou(RectF a, RectF b) {
         return box_intersection(a, b) / box_union(a, b);

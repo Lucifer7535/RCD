@@ -2,6 +2,8 @@ package com.gvvp.roadcrackdetector;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
@@ -12,7 +14,10 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.media.ImageReader.OnImageAvailableListener;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -23,6 +28,8 @@ import android.util.TypedValue;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -61,7 +68,7 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     private static final long MIN_TIME_BW_UPDATES = 1000 *20 * 1;
     private boolean isLogToDatabaseEnabled = true;
     private FirebaseAuth mAuth;
-
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
     private static final DetectorMode MODE = DetectorMode.TF_OD_API;
     private static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
     private static final boolean MAINTAIN_ASPECT = true;
@@ -222,7 +229,6 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             frameToCropTransform.invert(cropToFrameTransform);
         });
     }
-
     void logtoDatabase(Classifier.Recognition result, Bitmap image) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -236,14 +242,29 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
             damage.put("Confidence", 100 * result.getConfidence());
 
             try {
-                Geocoder geocoder = new Geocoder(DetectorActivity.this
-                        , Locale.getDefault());
-                List<Address> addresses = geocoder.getFromLocation(
-                        MainActivity.latitude, MainActivity.longitude, 1
-                );
+                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                Criteria criteria = new Criteria();
+
+                // Check if the location permission has been granted
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted, request the permission
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                            MY_PERMISSIONS_REQUEST_LOCATION);
+                    return;
+                }
+
+                // Permission has already been granted, get the last known location
+                Location location1 = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+                double latitude = location1.getLatitude();
+                double longitude = location1.getLongitude();
+
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
                 Address address = addresses.get(0);
-                damage.put("Latitude", MainActivity.latitude);
-                damage.put("Longitude", MainActivity.longitude);
+                damage.put("Latitude", latitude);
+                damage.put("Longitude", longitude);
                 damage.put("Country", address.getCountryName());
                 damage.put("Locality", address.getLocality());
                 damage.put("Postal Code", address.getPostalCode());
@@ -270,21 +291,21 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
                 backgroundPaint.setAlpha(128);
 
                 RectF location = result.getLocation();
-//                String title = result.getTitle();
-//                Float conf = 100 * result.getConfidence();
-//                DecimalFormat df = new DecimalFormat("#.##");
-//                String confasString = df.format(conf)+"%";
+//          String title = result.getTitle();
+//          Float conf = 100 * result.getConfidence();
+//          DecimalFormat df = new DecimalFormat("#.##");
+//          String confasString = df.format(conf)+"%";
                 if (location != null) {
                     canvas.drawRect(location, paint);
-//                    float titleWidth = textpaint.measureText(title);
-//                    float confWidth = textpaint.measureText(confasString);
-//                    float top = location.top-40;
+//              float titleWidth = textpaint.measureText(title);
+//              float confWidth = textpaint.measureText(confasString);
+//              float top = location.top-40;
 //
-//                    float centerX = location.left;
-//                    float baseline = top - textpaint.getFontMetrics().top;
+//              float centerX = location.left;
+//              float baseline = top - textpaint.getFontMetrics().top;
 //
-//                    canvas.drawText(title, centerX, baseline, textpaint);
-//                    canvas.drawText(confasString, location.right-confWidth, baseline, textpaint);
+//              canvas.drawText(title, centerX, baseline, textpaint);
+//              canvas.drawText(confasString, location.right-confWidth, baseline, textpaint);
                 }
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -305,6 +326,86 @@ public class DetectorActivity extends CameraActivity implements OnImageAvailable
     }
 
 
+//    void logtoDatabase(Classifier.Recognition result, Bitmap image) {
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+//        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+//        final List<String> titles = new ArrayList<>();
+//        final String uid = currentUser.getUid();
+//
+//        if (result.getConfidence() > 0.5) {
+//            Map<String, Object> damage = new HashMap<>();
+//            damage.put("Label", result.getTitle());
+//            damage.put("Confidence", 100 * result.getConfidence());
+//
+//            try {
+//                Geocoder geocoder = new Geocoder(DetectorActivity.this
+//                        , Locale.getDefault());
+//                List<Address> addresses = geocoder.getFromLocation(
+//                        MainActivity.latitude, MainActivity.longitude, 1
+//                );
+//                Address address = addresses.get(0);
+//                damage.put("Latitude", MainActivity.latitude);
+//                damage.put("Longitude", MainActivity.longitude);
+//                damage.put("Country", address.getCountryName());
+//                damage.put("Locality", address.getLocality());
+//                damage.put("Postal Code", address.getPostalCode());
+//                damage.put("Address Line", address.getAddressLine(0));
+//                damage.put("TimeStamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar
+//                        .getInstance().getTime()));
+//
+//                Bitmap mutableBitmap = image.copy(Bitmap.Config.ARGB_8888, true);
+//                Canvas canvas = new Canvas(mutableBitmap);
+//
+//                Paint paint = new Paint();
+//                paint.setColor(Color.RED);
+//                paint.setStyle(Paint.Style.STROKE);
+//                paint.setStrokeWidth(5.0f);
+//
+//                Paint textpaint = new Paint();
+//                textpaint.setColor(Color.RED);
+//                textpaint.setStyle(Paint.Style.STROKE);
+//                textpaint.setStrokeWidth(2.0f);
+//                textpaint.setTextSize(30);
+//
+//                Paint backgroundPaint = new Paint();
+//                backgroundPaint.setColor(Color.BLACK);
+//                backgroundPaint.setAlpha(128);
+//
+//                RectF location = result.getLocation();
+////                String title = result.getTitle();
+////                Float conf = 100 * result.getConfidence();
+////                DecimalFormat df = new DecimalFormat("#.##");
+////                String confasString = df.format(conf)+"%";
+//                if (location != null) {
+//                    canvas.drawRect(location, paint);
+////                    float titleWidth = textpaint.measureText(title);
+////                    float confWidth = textpaint.measureText(confasString);
+////                    float top = location.top-40;
+////
+////                    float centerX = location.left;
+////                    float baseline = top - textpaint.getFontMetrics().top;
+////
+////                    canvas.drawText(title, centerX, baseline, textpaint);
+////                    canvas.drawText(confasString, location.right-confWidth, baseline, textpaint);
+//                }
+//
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                mutableBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                byte[] imageData = baos.toByteArray();
+//                String imageBase64 = Base64.encodeToString(imageData, Base64.DEFAULT);
+//
+//                damage.put("Image", imageBase64);
+//
+//                CollectionReference locationsRef = db.collection("Users").document(uid).collection("locations");
+//                String key = locationsRef.document().getId();
+//                damage.put("id", key);
+//                locationsRef.document(key).set(damage);
+//            } catch(IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     @Override
     protected void processImage() {

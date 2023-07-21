@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.5f;
+    public static final float MINIMUM_CONFIDENCE_TF_OD_API = 0.25f;
     public static final int PRIORITY_HIGH_ACCURACY = 100;
 
     private ImageView menuProfile;
@@ -270,6 +270,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Toast.makeText(getApplicationContext(), "Permission denied.", Toast.LENGTH_SHORT).show();
         }
     }
+
+//    public void getCurrentLocation() {
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//
+//        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+//            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                    && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                // Request location permission
+//                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+//                return;
+//            }
+//
+//            fusedLocationProviderClient.getCurrentLocation(PRIORITY_HIGH_ACCURACY, null).addOnCompleteListener(new OnCompleteListener<Location>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Location> task) {
+//                    Location location = task.getResult();
+//
+//                    if (location != null) {
+//                        LOGGER.i("*************" + location.getLatitude());
+//                        LOGGER.i("*************" + location.getLongitude());
+//                        longitude = location.getLongitude();
+//                        latitude = location.getLatitude();
+//                    } else {
+//                        LocationRequest locationRequest = new LocationRequest()
+//                                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+//                                .setInterval(100)
+//                                .setFastestInterval(10)
+//                                .setNumUpdates(3);
+//
+//                        LocationCallback locationCallback = new LocationCallback() {
+//                            @Override
+//                            public void onLocationResult(@NonNull LocationResult locationResult) {
+//                                Location location1 = locationResult.getLastLocation();
+//                                LOGGER.i("*************" + location1.getLatitude());
+//                                LOGGER.i("*************" + location1.getLongitude());
+//                                longitude = location1.getLongitude();
+//                                latitude = location1.getLatitude();
+//                            }
+//                        };
+//
+//                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+//                                && ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                            return;
+//                        }
+//                        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+//                    }
+//                }
+//            });
+//        } else {
+//            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+//                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//        }
+//    }
 
     public void getCurrentLocation() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

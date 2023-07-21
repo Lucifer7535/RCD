@@ -173,7 +173,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         newmarker.setZIndex((float) confidence);
                                         markerList.add(newmarker);
                                     }
-
+/*
                                     LatLngBounds.Builder builder = new LatLngBounds.Builder();
                                     for (Marker marker : markerList) {
                                         builder.include(marker.getPosition());
@@ -186,7 +186,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     }
                                     else{
                                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
-                                    }
+                                    }*/
                                 } else {
                                     Log.d(TAG, "Error getting documents: ", task.getException());
                                 }

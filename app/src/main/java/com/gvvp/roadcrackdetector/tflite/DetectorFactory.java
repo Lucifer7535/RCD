@@ -10,7 +10,7 @@ public class DetectorFactory {
             final String modelFilename)
             throws IOException {
         String labelFilename = null;
-        boolean isQuantized = false;
+        boolean isQuantized = true;
         int inputSize = 0;
         int[] output_width = new int[]{0};
         int[][] masks = new int[][]{{0}};
@@ -26,7 +26,7 @@ public class DetectorFactory {
                     10,13, 16,30, 33,23, 30,61, 62,45, 59,119, 116,90, 156,198, 373,326
             };
         }
-        else if (modelFilename.equals("detect.tflite")) {
+        else if (modelFilename.equals("best-int8.tflite")) {
             labelFilename = "file:///android_asset/classes.txt";
             isQuantized = true;
             inputSize = 640;

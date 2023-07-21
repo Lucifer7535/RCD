@@ -51,7 +51,7 @@ public class StatsActivity extends AppCompatActivity {
         barDataSet.setValueFormatter(new ValueFormatter() {
             @Override
             public String getBarLabel(BarEntry barEntry) {
-                String[] labels = {"Linear Crack", "Longitudinal Crack", "Alligator Crack", "Pothole"};
+                String[] labels = {"Linear Crack", "Transverse Crack", "Alligator Crack", "Pothole"};
                 return labels[(int)barEntry.getX()];
             }
         });
